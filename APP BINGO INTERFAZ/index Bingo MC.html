@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo 00-99</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
+    .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; max-width: 400px; margin: 20px auto; }
+    .cell {
+      background: white; border: 1px solid #ccc; padding: 15px;
+      cursor: pointer; font-weight: bold; border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .cell.marked { background: #4caf50; color: white; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Bingo 00-99</h1>
+  <div class="grid" id="bingoGrid"></div>
+  <button onclick="resetGrid()">Resetear todo</button>
+
+  <script>
+    const grid = document.getElementById('bingoGrid');
+    const markedNumbers = JSON.parse(localStorage.getItem('bingoMarked') || '[]');
+
+    for (let i = 0; i < 100; i++) {
+      const num = i.toString().padStart(2, '0');
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.textContent = num;
+
+      if (markedNumbers.includes(num)) cell.classList.add('marked');
+
+      cell.addEventListener('click', () => {
+        cell.classList.toggle('marked');
+        const updated = document.querySelectorAll('.cell.marked');
+        const newMarked = Array.from(updated).map(c => c.textContent);
+        localStorage.setItem('bingoMarked', JSON.stringify(newMarked));
+      });
+
+      grid.appendChild(cell);
+    }
+
+    function resetGrid() {
+      localStorage.removeItem('bingoMarked');
+      document.querySelectorAll('.cell').forEach(c => c.classList.remove('marked'));
+    }
+  </script>
+</body>
+</html>
